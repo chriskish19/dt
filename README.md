@@ -1,5 +1,13 @@
 ﻿# Directory Tool (dt)
 
+## Updates 02-07-2026: 
+<p>
+I dont recommend using this program, its simply experimental at this point. V1.1 found on the releases page currently has many bugs that I dont have time to fix. 
+The main branch is full of experimental code which needs a better testing framework. 
+Im in school full-time for the next 1.5 years, I wish I had the time to finish this program.  
+</p>
+
+
 ## Info:
 <p> 
 Sync directories together and have files automatically updated/copied from source directory to destination directory. 
