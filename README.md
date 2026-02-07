@@ -1,4 +1,4 @@
-﻿# Directory Tool (dirt)
+﻿# Directory Tool (dt)
 
 ## Info:
 <p> 
