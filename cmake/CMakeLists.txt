@@ -43,10 +43,15 @@ file(GLOB_RECURSE dt_core_hf "../projects/dt.core/*.hpp") # dt_core_sf (core hea
 # core exe
 set(is_terminal_build OFF)
 set(is_gui_build OFF)
+set(is_gui_terminal_build OFF)
+
 
 string(COMPARE EQUAL ${build_type} "terminal" is_terminal_build)
 if(is_terminal_build)
     add_executable(${dt_core} ${dt_core_sf} ${dt_core_hf})
+    target_compile_definitions(${dt_core} PRIVATE
+        TERMINAL_BUILD=1
+    )
 endif()
 
 string(COMPARE EQUAL ${build_type} "win32-gui" is_gui_build)
@@ -57,17 +62,19 @@ if(is_gui_build)
     target_compile_definitions(${dt_core} PRIVATE
             UNICODE
             _UNICODE
+            WIN32_GUI_BUILD=1
         )
 endif()
 
-string(COMPARE EQUAL ${build_type} "win32-gui-terminal" is_gui_build)
-if(is_gui_build)
+string(COMPARE EQUAL ${build_type} "win32-gui-terminal" is_gui_terminal_build)
+if(is_gui_terminal_build)
     add_executable(${dt_core} ${dt_core_sf} ${dt_core_hf})
 
     # define UNICODE
     target_compile_definitions(${dt_core} PRIVATE
             UNICODE
             _UNICODE
+            WIN32_GUI_AND_TERMINAL=1
         )
 
     # Link against essential Windows libraries
@@ -99,6 +106,33 @@ foreach(HEADER_FILE ${dt_core_hf})
         target_compile_definitions(${dt_core} PRIVATE -DCORE_NAMES_INCLUDE=${FILE_NAME_HPP})
     endif()
 endforeach()
+
+# assets converted to macro names that hold the file paths
+if(is_gui_build OR is_gui_terminal_build)
+    # assets
+    file(GLOB dt_buttons "../assets/*.bmp")
+    foreach(BUTTON ${dt_buttons})
+        get_filename_component(FILE_NAME ${BUTTON} NAME_WE)
+        string(TOUPPER "${FILE_NAME}" FILE_NAME_UPPER)
+        set(MACRO_BUTTON_NAME "DT_${FILE_NAME_UPPER}_BUTTON_PATH")
+        set(BUTTON_FILE_PATH "L\"${BUTTON}\"")
+        target_compile_definitions(${dt_core} PRIVATE -D${MACRO_BUTTON_NAME}=${BUTTON_FILE_PATH})
+    endforeach()
+endif()
+
+# get all the icon files
+file(GLOB dt_icons "../assets/*.ico")
+
+# icons converted to macro names that hold the file paths
+# we have a function in c++ that handles setting icons so no need to prepend for unicode paths
+foreach(ICON ${dt_icons})
+    get_filename_component(FILE_NAME ${ICON} NAME_WE)
+    string(TOUPPER "${FILE_NAME}" FILE_NAME_UPPER)
+    set(MACRO_ICON_NAME "DT_${FILE_NAME_UPPER}_ICON_PATH")
+    set(ICON_FILE_PATH "\"${ICON}\"")
+    target_compile_definitions(${dt_core} PRIVATE -D${MACRO_ICON_NAME}=${ICON_FILE_PATH})
+endforeach()
+
 
 #############################
 # End of dt core exe

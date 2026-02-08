@@ -35,7 +35,7 @@
 #define CORE_API_INCLUDE_PATH					CORE_dt_api_hpp						// helper functions
 
 /*
-	classes : big objects needed for dirt.cores functionality
+	classes : big objects needed for dt.cores functionality
 */
 #define CORE_MAIN_ENTRY_INCLUDE_PATH			CORE_main_entry_hpp					// main singleton class
 #define CORE_PROCESSOR_INCLUDE_PATH				CORE_processor_hpp					// processes files
@@ -52,6 +52,7 @@
 #define CORE_UI_INCLUDE_PATH					CORE_ui_hpp							// main ui
 #define CORE_BAR_INCLUDE_PATH					CORE_bar_hpp						// progress bar class
 #define CORE_TASKBAR_INCLUDE_PATH				CORE_taskbar_hpp					// tool bar class
+#define CORE_DRAWING_INCLUDE_PATH				CORE_drawing_hpp					// drawing class
 
 // logger
 #define CORE_BASE_INCLUDE_PATH					CORE_base_hpp						// base logger

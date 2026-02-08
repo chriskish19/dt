@@ -16,20 +16,7 @@
 /*
 	building dirt
 */
-#define TERMINAL_BUILD 0						// build dirt for running as a terminal app
-#define WIN32_GUI_BUILD 1						// build dirt with a gui
 #define UNDER_CONSTRUCTION 1					// files being currently worked on
-#define WIN32_GUI_AND_TERMINAL 0				// both win32 gui and terminal appear
-
-/* 
-	assest paths
-*/
-#define DT_ICON_PATH "C:\\Users\\chris\\source\\repos\\dirt\\assets\\dt_icon.ico"
-#define DT_TOOLBAR_PATH L"C:\\Users\\chris\\source\\repos\\dirt\\assets\\toolbar.bmp"
-#define DT_NEW_BUTTON_PATH L"C:\\Users\\chris\\source\\repos\\dirt\\assets\\new.bmp"
-#define DT_OPEN_BUTTON_PATH L"C:\\Users\\chris\\source\\repos\\dirt\\assets\\open.bmp"
-#define DT_SAVE_BUTTON_PATH L"C:\\Users\\chris\\source\\repos\\dirt\\assets\\save.bmp"
-#define DT_COPY_BUTTON_PATH L"C:\\Users\\chris\\source\\repos\\dirt\\assets\\copy.bmp"
 
 /*
 	info

@@ -1,3 +1,4 @@
+#include "main_entry.hpp"
 
 /**********************************************************/
 //
@@ -231,6 +232,106 @@ core::codes core::main::terminal_entry::init() {
 	m_be = std::make_unique<backend>(m_v);
 	return core::codes::success;
 }
+
+core::main::gui_with_terminal_entry::gui_with_terminal_entry()
+{
+	std::vector<core::arg_entry> empty;
+	m_be = std::make_unique<backend>(empty);
+	m_fe = std::make_unique<frontend>();
+}
+
+core::main::gui_with_terminal_entry::gui_with_terminal_entry(const std::vector<core::arg_entry>& v)
+{
+	m_be = std::make_unique<backend>(v);
+	m_fe = std::make_unique<frontend>();
+}
+
+void core::main::gui_with_terminal_entry::go() {
+	std::jthread backend_run_t([this] { m_be->run(); });
+	std::jthread backend_message_t([this] { backend_messages(); });
+	m_fe->message_pump();
+	exit();
+}
+
+void core::main::gui_with_terminal_entry::exit() {
+	DestroyWindow(core::logger::glb_sl->get_window_handle());
+	m_be->m_run_watch.store(false);
+	m_run_backend_messages.store(false);
+	PostQueuedCompletionStatus(m_be->m_hCompletionPort, 0, m_be->m_completionKey, m_be->m_pOverlapped);
+}
+
+void core::main::gui_with_terminal_entry::backend_messages() {
+	loading_bar progress;
+	while (m_run_backend_messages.load() == true) {
+		// timer here, seconds to wait time
+		std::this_thread::sleep_for(std::chrono::milliseconds(GUI_SYNC_INTERVAL));
+		auto q = m_be->get_current_queue();
+		if (q.empty() == false) {
+			auto& command = q.front();
+			std::cout << '\n';
+			process_commands(command);
+			q.pop();
+		}
+		while (q.empty() == false && m_run_backend_messages.load() == true) {
+			auto& command = q.front();
+			process_commands(command);
+			q.pop();
+		}
+		progress.draw();
+	}
+}
+
+void core::main::gui_entry::backend_messages() {
+	window_loading_bar progress(core::logger::glb_sl->get_window_handle(), L"Processing...");
+	while (m_run_backend_messages.load() == true) {
+		// timer here, seconds to wait time
+		std::this_thread::sleep_for(std::chrono::milliseconds(GUI_SYNC_INTERVAL));
+		auto q = m_be->get_current_queue();
+		while (q.empty() == false && m_run_backend_messages.load() == true) {
+			auto& command = q.front();
+			gui_process_commands(command);
+			q.pop();
+		}
+		progress.draw();
+	}
+}
+
+void core::main::gui_entry::go() {
+	std::jthread backend_run_t([this] { m_be->run(); });
+	std::jthread backend_message_t([this] { backend_messages(); });
+	m_fe->message_pump();
+	exit();
+}
+
+void core::main::gui_entry::exit() {
+	DestroyWindow(core::logger::glb_sl->get_window_handle());
+	m_be->m_run_watch.store(false);
+	m_run_backend_messages.store(false);
+	PostQueuedCompletionStatus(m_be->m_hCompletionPort, 0, m_be->m_completionKey, m_be->m_pOverlapped);
+}
+
+core::main::gui_entry::gui_entry(const std::vector<core::arg_entry>& v) {
+	m_be = std::make_unique<backend>(v);
+	m_fe = std::make_unique<frontend>();
+	core::logger::glb_sl = std::make_unique<core::logger::system_log_window>();
+	SendMessage(m_fe->get_ui_p()->m_progress_bar1.get_bar_handle(), PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+#if ENABLE_API_LOGS
+	api::logger = std::make_unique<core::backend::system_log>();
+#endif
+}
+
+core::main::gui_entry::gui_entry() {
+	std::vector<core::arg_entry> empty;
+	m_be = std::make_unique<backend>(empty);
+	m_fe = std::make_unique<frontend>();
+	core::logger::glb_sl = std::make_unique<core::logger::system_log_window>();
+	SendMessage(m_fe->get_ui_p()->m_progress_bar1.get_bar_handle(), PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+#if ENABLE_API_LOGS
+	api::logger = std::make_unique<core::backend::system_log>();
+#endif
+}
+
+
 
 void core::main::gui_with_terminal_entry::process_commands(std::shared_ptr<core::backend::commands_info> ci)
 {
@@ -528,3 +629,5 @@ void core::main::gui_entry::gui_process_commands(std::shared_ptr<core::backend::
 		break;
 	}
 }
+
+

@@ -45,6 +45,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     if (code != core::codes::success) {
         auto pkg = api::match_code(code);
         api::output_cp(pkg);
+        return static_cast<int>(pkg.code());
     }
     try {
         std::unique_ptr<core::main::gui_entry> p_gui = std::make_unique<core::main::gui_entry>(entry_v);
@@ -65,18 +66,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 std::vector<core::arg_entry> entry_v;
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     try {
-        std::unique_ptr<core::gui_with_terminal_entry> p_gui = std::make_unique<core::gui_with_terminal_entry>(entry_v);
+        std::unique_ptr<core::main::gui_with_terminal_entry> p_gui = std::make_unique<core::main::gui_with_terminal_entry>(entry_v);
         p_gui->go();
     }
     catch (const core::code_pkg& cpe) {
-        MessageBox(NULL, api::to_wide_string(cpe.m_s_code).c_str(), L"EXCEPTION", MB_OK | MB_ICONERROR);
+        api::output_cp(cpe);
         return static_cast<int>(core::codes::exception_thrown_and_handled);
     }
     catch (...) {
-        MessageBox(NULL, api::to_wide_string(core::unknown_exception_caught_pkg.m_s_code).c_str(), L"EXCEPTION", MB_OK | MB_ICONERROR);
+        api::output_cp(core::unknown_exception_caught_pkg);
         return static_cast<int>(core::codes::unknown_exception_caught);
     }
-   
     return static_cast<int>(core::codes::success);
 }
 int main(int argc, char* argv[]) {
@@ -86,14 +86,14 @@ int main(int argc, char* argv[]) {
         core::codes code;
         entry_v = api::cmd_line(argc, argv, &code);
         if (code != core::codes::success) {
-            std::cout << api::match_code(code).m_s_code << '\n';
+            std::cout << api::match_code(code).message() << '\n';
             std::cout << api::get_location() << '\n';
         }
     }
     {
         core::codes code = api::validate(entry_v);
         if (code != core::codes::success) {
-            std::cout << api::match_code(code).m_s_code << '\n';
+            std::cout << api::match_code(code).message() << '\n';
             std::cout << api::get_location() << '\n';
         }
     }

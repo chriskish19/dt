@@ -147,7 +147,7 @@ core::window::window::window()
 
     {
         core::codes code;
-        code = set_icon(m_window_handle, DT_ICON_PATH);
+        code = set_icon(m_window_handle, DT_MAIN_ICON_PATH);
         if (code != codes::success) {
             throw api::match_code(code);
         }
