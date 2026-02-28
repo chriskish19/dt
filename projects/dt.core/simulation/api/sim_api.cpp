@@ -1,7 +1,3 @@
-#include CORE_NAMES_INCLUDE
-#include CORE_DEFINES_INCLUDE_PATH
-#if! UNDER_CONSTRUCTION
-
 /**********************************************************/
 //
 // File: sim_api.cpp
@@ -14,4 +10,9 @@
 
 #include CORE_NAMES_INCLUDE
 #include CORE_SIM_API_INCLUDE_PATH
-#endif
+
+
+core::codes core::test_api::full_timed_gui_entry(std::size_t duration)
+{
+    
+}

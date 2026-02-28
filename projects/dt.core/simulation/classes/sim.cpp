@@ -11,7 +11,7 @@
 #include CORE_NAMES_INCLUDE
 #include CORE_SIM_INCLUDE_PATH
 
-core::entry_sim::~entry_sim()
+core::test::backend::~backend()
 {
 	m_s_runner.store(false);
 
@@ -21,7 +21,7 @@ core::entry_sim::~entry_sim()
 	}
 }
 
-core::entry_sim::entry_sim(const std::filesystem::path& test_dir)
+core::test::backend::backend(const std::filesystem::path& test_dir)
 	:m_test_files(test_dir)
 {
 	try {
@@ -36,7 +36,7 @@ core::entry_sim::entry_sim(const std::filesystem::path& test_dir)
 	}
 }
 
-core::codes core::entry_sim::work(std::size_t ms) {
+core::codes core::test::backend::work(std::size_t ms) {
 	std::thread queue_sys_t(&queue_system::process_entry, this);
 
 	while (m_s_runner.load() == true) {
@@ -66,7 +66,7 @@ core::codes core::entry_sim::work(std::size_t ms) {
 	return codes::success;
 }
 
-core::file_entry core::entry_sim::make_entry()
+core::file_entry core::test::backend::make_entry()
 {
 	file_entry entry;
 	entry.action = file_action::copy;

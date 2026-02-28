@@ -27,6 +27,7 @@ namespace core {
 			file_copy,
 			file_delete,
 			directory_delete,
+			new_backend,
 		};
 
 		struct commands_info {
@@ -160,6 +161,22 @@ namespace core {
 				return commands::directory_delete;
 			}
 		};
+
+		struct new_backend : public commands_info {
+			new_backend(const std::vector<core::arg_entry>& v)
+			:m_v(v){}
+
+			std::vector<core::arg_entry> m_v;
+
+			commands command() const override {
+				return commands::new_backend;
+			}
+
+			std::shared_ptr<commands_info> clone() const override {
+				return std::make_shared<new_backend>(*this);
+			}
+		};
+
 
 		class backend_message_queue {
 		public:

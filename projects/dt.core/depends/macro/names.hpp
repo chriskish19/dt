@@ -43,6 +43,9 @@
 #define CORE_TOUT_INCLUDE_PATH					CORE_output_hpp						// outputing
 #define CORE_WINDOW_INCLUDE_PATH				CORE_dt_window_hpp					// win32 window
 #define CORE_UTILITY_INCLUDE_PATH				CORE_utility_hpp					// utilities
+#define CORE_FRONTEND_INCLUDE_PATH				CORE_frontend_hpp					// frontend 
+#define CORE_BACKEND_INCLUDE_PATH				CORE_backend_hpp					// backend
+#define CORE_MESSAGES_INCLUDE_PATH				CORE_messages_hpp					// process messages for front and backend
 
 // windows 64 gui
 #define CORE_BUTTON_INCLUDE_PATH				CORE_button_hpp						// button class

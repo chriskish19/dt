@@ -23,6 +23,9 @@
 #include CORE_TOUT_INCLUDE_PATH
 #include CORE_SYSINIT_INCLUDE_PATH
 #include CORE_DRAWING_INCLUDE_PATH
+#include CORE_FRONTEND_INCLUDE_PATH
+#include CORE_BACKEND_INCLUDE_PATH
+
 
 
 namespace core {
@@ -31,17 +34,6 @@ namespace core {
 		/************************************************/
 		/*			Win32 GUI build objects				*/
 		/************************************************/
-		class backend : public core::backend::process {
-		public:
-			backend(const std::vector<arg_entry>& v);
-			core::codes run();
-		protected:
-		};
-
-		class frontend : public core::window::dt_window {
-		public:
-		protected:
-		};
 
 		class gui_with_terminal_entry {
 		public:
@@ -53,8 +45,8 @@ namespace core {
 			void process_commands(std::shared_ptr<core::backend::commands_info> ci);
 			void backend_messages();
 			std::atomic<bool> m_run_backend_messages = true;
-			std::unique_ptr<backend> m_be = nullptr;
-			std::unique_ptr<frontend> m_fe = nullptr;
+			std::unique_ptr<core::backend::Cbackend> m_be = nullptr;
+			std::unique_ptr<core::frontend::Cfrontend> m_fe = nullptr;
 		};
 
 		class gui_entry {
@@ -99,10 +91,10 @@ namespace core {
 		/*
 			tests the terminal build
 		*/
-		class test_terminal_entry : public entry_sim {
+		class test_terminal_entry : public core::test::backend {
 		public:
 			test_terminal_entry()
-				: entry_sim(TEST_FOLDER) {
+				: backend(TEST_FOLDER) {
 			}
 			void go();
 		protected:
