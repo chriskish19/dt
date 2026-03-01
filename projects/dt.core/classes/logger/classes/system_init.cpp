@@ -1,3 +1,5 @@
+#if !TERMINAL_BUILD
+
 /**********************************************************/
 //
 // File: system_init.cpp (system initialize)
@@ -104,5 +106,7 @@ void core::logger::system_log_window::log_message(const string& message)
 	
 	AppendText(m_p_main_ui->m_output_tb.get_textbox_handle(), message.c_str());
 }
+
+#endif
 
 #endif

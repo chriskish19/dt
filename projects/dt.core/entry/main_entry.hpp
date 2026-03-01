@@ -25,79 +25,62 @@
 #include CORE_DRAWING_INCLUDE_PATH
 #include CORE_FRONTEND_INCLUDE_PATH
 #include CORE_BACKEND_INCLUDE_PATH
+#include CORE_MESSAGES_INCLUDE_PATH
 
 
 
 namespace core {
 	namespace main {
-
-		/************************************************/
-		/*			Win32 GUI build objects				*/
-		/************************************************/
-
-		class gui_with_terminal_entry {
+#if !TERMINAL_BUILD
+		class Cmain : public core::main::messages{
 		public:
-			gui_with_terminal_entry();
-			gui_with_terminal_entry(const std::vector<core::arg_entry>& v);
-			void go();
-		protected:
-			void exit();
-			void process_commands(std::shared_ptr<core::backend::commands_info> ci);
-			void backend_messages();
-			std::atomic<bool> m_run_backend_messages = true;
-			std::unique_ptr<core::backend::Cbackend> m_be = nullptr;
-			std::unique_ptr<core::frontend::Cfrontend> m_fe = nullptr;
-		};
+			Cmain(core::main::build type) 
+				:messages(type) {}
 
-		class gui_entry {
-		public:
-			gui_entry();
-			gui_entry(const std::vector<core::arg_entry>& v);
-			void go();
-		protected:
-			void exit();
-			void gui_process_commands(std::shared_ptr<core::backend::commands_info> ci);
-			void backend_messages();
-			std::atomic<bool> m_run_backend_messages = true;
-			std::unique_ptr<backend> m_be = nullptr;
-			std::unique_ptr<frontend> m_fe = nullptr;
-		};
-
-		/************************************************/
-		/*			Terminal build objects				*/
-		/************************************************/
-
-		/*
-			for processing log messages and information
-		*/
-		void terminal_process_commands(std::shared_ptr<core::backend::commands_info> ci);
-
-		/*
-			main object for running the terminal build
-		*/
-		class terminal_entry {
-		public:
-			terminal_entry(int argc, char* argv[])
-				:m_argc(argc), m_argv(argv) {}
-			codes init();
-			void go();
-		protected:
-			std::unique_ptr<backend> m_be = nullptr;
-			int m_argc = 0;
-			char** m_argv = nullptr;
-			std::vector<arg_entry> m_v;
-		};
-
-		/*
-			tests the terminal build
-		*/
-		class test_terminal_entry : public core::test::backend {
-		public:
-			test_terminal_entry()
-				: backend(TEST_FOLDER) {
+			virtual void go() {
+				std::jthread backend_begin_t([this] { m_backend->begin(); });
+				std::jthread process_message_t([this] { process(); });
+				m_frontend->message_pump();
+				exit();
 			}
-			void go();
 		protected:
+			virtual void exit() {
+				DestroyWindow(core::logger::glb_sl->get_window_handle());
+				m_backend->m_run_watch.store(false);
+				m_run_messages.store(false);
+				PostQueuedCompletionStatus(m_backend->m_hCompletionPort, 0, m_backend->m_completionKey, m_backend->m_pOverlapped);
+			}
+		};
+#else
+		class Cmain : public core::main::messages {
+		public:
+			Cmain(core::main::build type,int argc, char* argv[])
+				:messages(type,argc,argv) {
+			}
+
+			virtual void go() = 0;
+		protected:
+			virtual void exit() = 0;
+		};
+
+
+		class Cterminal : public Cmain {
+		public:
+			Cterminal(int argc, char* argv[])
+				:Cmain(build::terminal,argc,argv){}
+
+			void go() override {
+				std::jthread backend_begin_t([this] { m_backend->begin(); });
+				process();
+				exit();
+			}
+		protected:
+			void exit() override {
+				m_backend->m_run_watch.store(false);
+				m_run_messages.store(false);
+				PostQueuedCompletionStatus(m_backend->m_hCompletionPort, 0, m_backend->m_completionKey, m_backend->m_pOverlapped);
+			}
 		};
 	}
+#endif
 }

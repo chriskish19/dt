@@ -1,3 +1,5 @@
+#if !TERMINAL_BUILD
+
 /**********************************************************/
 //
 // File: system_init.hpp (system initialize)
@@ -40,3 +42,5 @@ namespace core {
 #endif
     }
 }
+
+#endif

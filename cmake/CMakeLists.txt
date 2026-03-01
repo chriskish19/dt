@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.18)
 set(dt_core "dt-core")
 
 # set build type
-set(build_type "win32-gui")
+set(build_type "terminal")
 
 # create the main project
 project(${dt_core})
@@ -50,6 +50,8 @@ string(COMPARE EQUAL ${build_type} "terminal" is_terminal_build)
 if(is_terminal_build)
     add_executable(${dt_core} ${dt_core_sf} ${dt_core_hf})
     target_compile_definitions(${dt_core} PRIVATE
+        UNICODE
+        _UNICODE
         TERMINAL_BUILD=1
     )
 endif()
@@ -118,20 +120,22 @@ if(is_gui_build OR is_gui_terminal_build)
         set(BUTTON_FILE_PATH "L\"${BUTTON}\"")
         target_compile_definitions(${dt_core} PRIVATE -D${MACRO_BUTTON_NAME}=${BUTTON_FILE_PATH})
     endforeach()
+
+    # get all the icon files
+    file(GLOB dt_icons "../assets/*.ico")
+
+    # icons converted to macro names that hold the file paths
+    # we have a function in c++ that handles setting icons so no need to prepend for unicode paths
+    foreach(ICON ${dt_icons})
+        get_filename_component(FILE_NAME ${ICON} NAME_WE)
+        string(TOUPPER "${FILE_NAME}" FILE_NAME_UPPER)
+        set(MACRO_ICON_NAME "DT_${FILE_NAME_UPPER}_ICON_PATH")
+        set(ICON_FILE_PATH "\"${ICON}\"")
+        target_compile_definitions(${dt_core} PRIVATE -D${MACRO_ICON_NAME}=${ICON_FILE_PATH})
+    endforeach()
 endif()
 
-# get all the icon files
-file(GLOB dt_icons "../assets/*.ico")
 
-# icons converted to macro names that hold the file paths
-# we have a function in c++ that handles setting icons so no need to prepend for unicode paths
-foreach(ICON ${dt_icons})
-    get_filename_component(FILE_NAME ${ICON} NAME_WE)
-    string(TOUPPER "${FILE_NAME}" FILE_NAME_UPPER)
-    set(MACRO_ICON_NAME "DT_${FILE_NAME_UPPER}_ICON_PATH")
-    set(ICON_FILE_PATH "\"${ICON}\"")
-    target_compile_definitions(${dt_core} PRIVATE -D${MACRO_ICON_NAME}=${ICON_FILE_PATH})
-endforeach()
 
 
 #############################

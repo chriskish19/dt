@@ -1,3 +1,4 @@
+#if !TERMINAL_BUILD // disables ui in terminal builds
 /**********************************************************/
 //
 // File: ui.hpp
@@ -390,3 +391,4 @@ namespace core {
 	}
 }
 
+#endif

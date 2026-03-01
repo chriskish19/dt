@@ -14,5 +14,5 @@
 
 core::codes core::test_api::full_timed_gui_entry(std::size_t duration)
 {
-    
+    return codes();
 }

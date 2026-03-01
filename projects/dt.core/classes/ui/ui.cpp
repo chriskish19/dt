@@ -1,5 +1,4 @@
-#include "ui.hpp"
-
+#if !TERMINAL_BUILD
 /***********************************************
 *
 * File: ui.cpp
@@ -519,3 +518,5 @@ void core::gui::system_log_window_ui::output_action(textbox_commands command)
 		break;
 	}
 }
+
+#endif

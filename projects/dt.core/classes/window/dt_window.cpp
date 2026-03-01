@@ -1,3 +1,4 @@
+#if !TERMINAL_BUILD
 
 /**********************************************************/
 //
@@ -355,3 +356,5 @@ LRESULT core::window::dt_window::ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wPa
     // no default switch needed
     return window::ThisWindowProc(hwnd, uMsg, wParam, lParam);
 }
+
+#endif

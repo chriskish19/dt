@@ -15,10 +15,12 @@
 #include CORE_DRAWING_INCLUDE_PATH
 #include CORE_LOGGER_INCLUDE_PATH
 #include CORE_SYSINIT_INCLUDE_PATH
+#include CORE_BACKEND_INCLUDE_PATH
 
 
 namespace core {
 	namespace frontend {
+#if !TERMINAL_BUILD
 		class Cfrontend : public core::window::dt_window {
 		public:
 			virtual ~Cfrontend() = default;
@@ -48,6 +50,17 @@ namespace core {
 			core::main::window_loading_bar* progress = new core::main::window_loading_bar(core::logger::glb_sl->get_window_handle(), L"Processing...");
 
 		};
+#else
+
+		class Cfrontend {
+		public:
+			virtual ~Cfrontend() = default;
+			virtual void draw_progress() = 0;
+			virtual void process_commands(std::shared_ptr<core::backend::commands_info> ci) = 0;
+		protected:
+
+
+		};
 
 		class terminal : public Cfrontend {
 		public:
@@ -59,5 +72,5 @@ namespace core {
 
 
 	}
-	
+#endif
 }

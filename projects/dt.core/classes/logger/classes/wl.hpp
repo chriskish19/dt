@@ -1,3 +1,5 @@
+#if !TERMINAL_BUILD
+
 /**********************************************************/
 //
 // File: wl.hpp (window logger)
@@ -94,3 +96,5 @@ namespace core {
 		};
 	}
 }
+
+#endif

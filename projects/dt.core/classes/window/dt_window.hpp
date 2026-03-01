@@ -1,3 +1,5 @@
+#if !TERMINAL_BUILD
+
 /**********************************************************/
 //
 // File: dw.hpp (dt window)
@@ -74,3 +76,5 @@ namespace core{
 		};
 	}
 }
+
+#endif

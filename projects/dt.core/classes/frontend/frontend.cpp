@@ -1,5 +1,3 @@
-#include "frontend.hpp"
-
 /**********************************************************/
 //
 // File:
@@ -13,6 +11,7 @@
 #include CORE_NAMES_INCLUDE
 #include CORE_FRONTEND_INCLUDE_PATH
 
+#if !TERMINAL_BUILD
 
 void core::frontend::gui_with_terminal::draw_progress()
 {
@@ -143,6 +142,12 @@ void core::frontend::gui_with_terminal::process_commands(std::shared_ptr<core::b
 		break;
 	}
 
+	case core::backend::commands::new_backend:
+	{
+
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -170,10 +175,10 @@ void core::frontend::gui::process_commands(std::shared_ptr<core::backend::comman
 		if (progress_bar_info != nullptr) {
 			switch (progress_bar_info->bar_number) {
 			case core::backend::progress_bar::id::one:
-				SendMessage(m_fe->get_ui_p()->m_progress_bar1.get_bar_handle(), PBM_SETPOS, progress_bar_info->progress, 0);
+				SendMessage(get_ui_p()->m_progress_bar1.get_bar_handle(), PBM_SETPOS, progress_bar_info->progress, 0);
 				break;
 			case core::backend::progress_bar::id::two:
-				SendMessage(m_fe->get_ui_p()->m_progress_bar2.get_bar_handle(), PBM_SETPOS, progress_bar_info->progress, 0);
+				SendMessage(get_ui_p()->m_progress_bar2.get_bar_handle(), PBM_SETPOS, progress_bar_info->progress, 0);
 				break;
 			case core::backend::progress_bar::id::three:
 				break;
@@ -328,6 +333,8 @@ void core::frontend::gui::process_commands(std::shared_ptr<core::backend::comman
 	}
 }
 
+#else
+
 void core::frontend::terminal::draw_progress()
 {
 	progress.draw();
@@ -461,3 +468,5 @@ void core::frontend::terminal::process_commands(std::shared_ptr<core::backend::c
 		break;
 	}
 }
+
+#endif

@@ -25,7 +25,6 @@ namespace core {
 			Cbackend(const std::vector<arg_entry>& v);
 			core::codes begin();
 		protected:
-			std::atomic<bool> m_run_backend_messages = true;
 		};
 	}
 }

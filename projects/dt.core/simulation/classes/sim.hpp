@@ -33,11 +33,6 @@ namespace core {
 			std::filesystem::recursive_directory_iterator m_b_dir_it;
 			std::filesystem::recursive_directory_iterator m_end_dir_it = {};
 		};
-
-		class frontend : public core::{
-
-		};
-
 	}
 	
 

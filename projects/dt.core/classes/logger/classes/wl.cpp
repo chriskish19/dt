@@ -1,4 +1,5 @@
-#include "wl.hpp"
+#if !TERMINAL_BUILD
+
 /**********************************************************/
 //
 // File: wl.cpp (window logger)
@@ -596,3 +597,5 @@ LRESULT core::logger::log_window::this_window_proc(HWND hwnd, UINT uMsg, WPARAM 
 
     return core::logger::window::this_window_proc(hwnd, uMsg, wParam, lParam);
 }
+
+#endif
